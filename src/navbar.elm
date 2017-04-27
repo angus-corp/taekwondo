@@ -11,10 +11,10 @@ navbar logout token page =
   nav []
     [ h1 [] [text "TTKKDD"]
     , ul []
-        [ navBtn page "Match" "/match"
-        , navBtn page "Roll" "/roll"
-        , navBtn page "Payments" "/payments"
-        , navBtn page "Admin" "/admin"
+        [ navBtn page "Match" "match"
+        , navBtn page "Roll" "roll"
+        , navBtn page "Payments" "payments"
+        , navBtn page "Admin" "admin"
         ]
     , div [class "divider"] []
     , loginBtn logout token
@@ -30,16 +30,16 @@ loginBtn logout token =
             [class "button dropdown-button"]
             [text token.username]
         , div [class "dropdown-menu"]
-            [ a [href "/profile"]
+            [ a [href "profile"]
                 [text "Profile"]
-            , a [href "/login", target "login"]
+            , a [href "login", target "login"]
                 [text "Switch User"]
             , a [href "#", onClick logout]
                 [text "Sign Out"]
             ]
         ]
     Nothing ->
-      a [class "button", href "/login", target "login"]
+      a [class "button", href "login", target "login"]
         [text "Sign In"]
 
 
