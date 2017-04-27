@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <title>Sign In | TTKKDD</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="main.css">
+  <meta name="viewport" content="width=device-width">
+  <meta charset="utf-8">
+  <style>
+.container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  padding: 16px;
+  max-width: 480px;
+  box-sizing: border-box;
+}
+
+input {
+  border: 0;
+  background-color: transparent;
+  border-bottom: solid 2px #888888;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 1.5em;
+  transition: border-color 0.25s;
+}
+
+button {
+  border: 0;
+  font: inherit;
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #FFFFFF;
+}
+
+button:active {
+  background-color: #CCCCCC !important;
+}
+
+button:focus {
+  outline: none;
+}
+
+label {
+  color: #888888;
+  margin-top: 16px;
+  transition: color 0.25s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #FFFFFF;
+}
+
+input:focus + label {
+  color: #FFF;
+}
+
+p {
+  margin: 0;
+  padding: 16px;
+  position: relative;
+}
+
+p.success {
+  background-color: #008800;
+}
+
+p.error {
+  background-color: #880000;
+}
+  </style>
+</head>
+<body>
+  <main id="main"></main>
+  <script src="app.js"></script>
+  <script>
+Elm.Login.embed(document.getElementById("main"));
+  </script>
+</body>
+</html>

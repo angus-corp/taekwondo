@@ -1,0 +1,2 @@
+#!/bin/sh
+elm-make src/*.elm --output public/app.js && uglifyjs -cmo public/app.js -- public/app.js
