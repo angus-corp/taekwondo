@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <title>Roll | TTKKDD</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="main.css">
+  <meta name="viewport" content="width=device-width">
+  <meta charset="utf-8">
+  <style>
+.att .present::before { content: "Present"; }
+.att .absent::before  { content: "Absent"; }
+.att .late::before    { content: "Late"; }
+
+.att .present.active { background-color: #00AA00; }
+.att .absent.active { background-color: #AA0000; }
+.att .late.active { background-color: #AAAA00; }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.att .button {
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.att .button:active {
+  transform: scale(0.9);
+}
+
+.att {
+  margin: 16px;
+  border-collapse: collapse;
+}
+
+.att td {
+  background-color: #323232;
+  padding: 16px;
+  border: 0;
+}
+
+.input-group {
+  display: flex;
+  align-items: stretch;
+  margin-top: 16px;
+}
+
+.input-group button {
+  padding: 8px 12px;
+  font: inherit;
+  background-color: #00CC66;
+  border: 0;
+  color: #FFFFFF;
+}
+
+.input-group button:active {
+  background-color: #00AA55;
+}
+
+.input-group :not(:last-child) {
+  border-right: 8px solid #EEEEEE;
+}
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 8px 16px;
+  font: inherit;
+  border: 0;
+  border-radius: 0;
+  background-color: #FFFFFF;
+}
+  </style>
+</head>
+<body>
+  <main id="main"></main>
+  <script src="app.js"></script>
+  <script>
+Elm.Roll.embed(document.getElementById("main"));
+  </script>
+</body>
+</html>
