@@ -98,11 +98,11 @@ nav .button:active {
   z-index: 1000;
 }
 
-.dropdown-button:focus + .dropdown-menu {
+.dropdown-button:hover + .dropdown-menu {
   display: flex;
 }
 
-.dropdown-menu:hover, .dropdown-menu :focus {
+.dropdown-menu:hover {
   display: flex;
 }
 
