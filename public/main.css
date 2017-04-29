@@ -112,7 +112,7 @@ nav .button:active {
 }
 
 .dropdown-menu a:hover {
-  background-color: rgba(0,0,0,0.25);
+  background-color: rgba(0,0,0,0.1);
 }
 
 /* DATE INPUT */
