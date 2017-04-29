@@ -1,4 +1,4 @@
-var _angus_corp$taekwondo$Native_NativeModule = (function() {
+var _angus_corp$taekwondo$Native_Window = (function() {
 
 function close() {
   return _elm_lang$core$Native_Scheduler.nativeBinding(function (cb) {
