@@ -185,6 +185,7 @@ select:focus {
   align-items: stretch;
   margin-top: 16px;
   border: solid 1px #EEEEEE;
+  background-color: #FFFFFF;
   border-radius: 3px;
   overflow: hidden;
 }
