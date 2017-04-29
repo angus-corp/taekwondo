@@ -676,7 +676,7 @@ authErrorText err =
 
 pleaseSignInAgain =
   span []
-    [ text "You need to "
+    [ text "Please "
     , a [href "login"] [text "sign in again"]
     , text "."
     ]
