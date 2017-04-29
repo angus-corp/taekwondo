@@ -201,6 +201,10 @@ select:focus {
   border-right: 1px solid #EEEEEE;
 }
 
+.input-group > * {
+  margin: 0;
+}
+
 .input-group select {
   -webkit-appearance: none;
   appearance: none;
