@@ -545,18 +545,13 @@ content model =
       Empty model ->
         [ p [class "error toast"] <|
             if model.token == Nothing then
-              [ text "You need to sign in." ]
+              [pleaseSignIn]
             else
-              [ text "You have no classes to track! "
-              , a [href "#", onClick FetchMeta] [text "Try again?"]
-              ]
+              [tryAgain "You have no classes to track! "]
         ]
       Error {error} ->
         [ p [class "error toast"]
-            [ authErrorText error
-            , text " "
-            , a [href "#", onClick FetchMeta] [text "Try again?"]
-            ]
+            [authErrorText error]
         ]
       Ready model ->
         [ div [class "input-group"]
@@ -663,20 +658,41 @@ authErrorText err =
           a [href "http://www.mspaintadventures.com/?s=6&p=003552"]
             [text "I'm sorry, but…"]
         Http.Timeout ->
-          text "The Internet took too long."
+          tryAgain "The Internet took too long."
         Http.NetworkError ->
-          text "An unknown network error occurred."
+          tryAgain "An unknown network error occurred."
         Http.BadPayload _ _ ->
-          text "Please sign in." -- GraphQL Error.
+          pleaseSignIn -- GraphQL Error.
         Http.BadStatus _ ->
-          text "The server encountered an error."
+          tryAgain "The server encountered an error."
     Auth.ExpiredToken ->
-      text "The token has expired. Please sign in again." --TODO: Link to reauthenticate.
+      pleaseSignInAgain --TODO: Link to reauthenticate.
     Auth.Unauthorized ->
-      text "Please sign in."
+      pleaseSignIn
     Auth.Forbidden ->
-      text "You aren't privileged enough."
+      tryAgain "You aren't privileged enough."
 
+
+
+pleaseSignInAgain =
+  span []
+    [ text "You need to "
+    , a [href "login"] [text "sign in again"]
+    , text "."
+    ]
+
+pleaseSignIn =
+  span []
+    [ text "Please "
+    , a [href "login"] [text "sign in"]
+    , text "."
+    ]
+
+tryAgain msg =
+  span []
+    [ text (msg ++ " ")
+    , a [href "#", onClick FetchMeta] [text "Try again?"]
+    ]
 
 
 -- HELPERS
