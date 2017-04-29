@@ -98,7 +98,7 @@ nav .button:active {
   z-index: 1000;
 }
 
-.dropdown-button:hover + .dropdown-menu {
+.dropdown-button:focus + .dropdown-menu {
   display: flex;
 }
 
