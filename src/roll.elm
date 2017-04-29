@@ -673,14 +673,14 @@ authErrorText err =
 pleaseSignInAgain =
   span []
     [ text "Please "
-    , a [href "login"] [text "sign in again"]
+    , a [href "login", target "login"] [text "sign in again"]
     , text "."
     ]
 
 pleaseSignIn =
   span []
     [ text "Please "
-    , a [href "login"] [text "sign in"]
+    , a [href "login", target "login"] [text "sign in"]
     , text "."
     ]
 
