@@ -189,6 +189,7 @@ select:focus {
   padding: 8px 12px;
   font: inherit;
   background-color: #FFFFFF;
+  color: #000000;
   border: 0;
 }
 
