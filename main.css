@@ -111,6 +111,10 @@ nav .button:active {
   padding: 8px 16px;
 }
 
+.dropdown-menu a:hover {
+  background-color: rgba(0,0,0,0.25);
+}
+
 /* DATE INPUT */
 
 input[type="date"]::-webkit-clear-button {
