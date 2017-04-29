@@ -117,7 +117,8 @@ view : Model -> Html Msg
 view model =
   div [class "container"] <|
     if model.state == Done then
-      [p [class "success"] [text "Success! You can close this window now."]]
+      [p [class "success toast"]
+        [text "Success! You can close this window now."]]
     else
       case model.error of
         Just msg -> [error msg, loginForm model]
@@ -163,4 +164,4 @@ loginButton model =
 
 
 error error =
-  p [class "error"] [text error]
+  p [class "error toast"] [text error]
