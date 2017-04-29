@@ -18,7 +18,7 @@ nav {
   display: flex;
   width: 100%;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   background-color: #282828;
   box-sizing: border-box;
 }
@@ -183,7 +183,6 @@ select:focus {
 .input-group {
   display: flex;
   align-items: stretch;
-  margin-top: 16px;
   border: solid 1px #EEEEEE;
   background-color: #FFFFFF;
   border-radius: 3px;
