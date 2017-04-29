@@ -6,6 +6,7 @@ import Date exposing (Date)
 import Json.Encode as E
 import Json.Decode as D
 import Navbar exposing (navbar)
+import Loader
 import LocalStorage
 import Task exposing (Task)
 import Html exposing (..)
@@ -29,7 +30,7 @@ main =
 
 
 
---LONG: Add NOTES.
+--LONG: Add notes.
 type Model
   = Ready
     { token: Maybe Auth.Token
@@ -116,10 +117,6 @@ type alias Class =
 -- PERSISTENCE
 
 
-
---LONG: Refactor rest of code to use this.
-dictFromList a b =
-  D.map Dict.fromList (D.list (D.map2 (,) (D.index 0 a) (D.index 1 b)))
 
 getRoll : Date -> Task LocalStorage.Error Roll
 getRoll date =
@@ -231,6 +228,11 @@ setMeta meta =
 
 
 
+dictFromList a b =
+  D.map Dict.fromList (D.list (D.map2 (,) (D.index 0 a) (D.index 1 b)))
+
+
+
 -- SERVER
 
 
@@ -291,8 +293,6 @@ query = """{
     }
   }
 }"""
-
-
 
 metafy locs =
   { students =
@@ -539,44 +539,26 @@ view model =
 --TODO: Styles / classes.
 --TODO: ALL OF THIS.
 content model =
-  case model of
-    Loading model -> p [] [text "Loading…"]
-    Empty model ->
-      p [] <|
-        if model.token == Nothing then
-          [ text "You need to sign in."
-          ]
-        else
-          [ text <|
-              "You have no classes to track! "
-          , a [href "#", onClick FetchMeta] [text "Check again?"]
-          ]
-    Error {error} ->
-      p []
-        [ text ((
-            case error of
-              Auth.HttpError err ->
-                case err of
-                  Http.BadUrl _ ->
-                    "WHOEVER PROGRAMMED ME SUCKS."
-                  Http.Timeout ->
-                    "The request timed out."
-                  Http.NetworkError ->
-                    "An unknown network error occurred."
-                  Http.BadPayload _ _ ->
-                    "You need to sign in."
-                  Http.BadStatus _ ->
-                    "The server encountered an error."
-              Auth.ExpiredToken ->
-                "The token has expired. Please sign in again."
-              Auth.Unauthorized ->
-                "You need to login."
-              Auth.Forbidden ->
-                "You don't have the necessary privileges.") ++ " ")
-        , a [href "#", onClick FetchMeta] [text "Check again?"]
+  (
+    case model of
+      Loading model -> [Loader.loader]
+      Empty model ->
+        [ p [class "error toast"] <|
+            if model.token == Nothing then
+              [ text "You need to sign in." ]
+            else
+              [ text "You have no classes to track! "
+              , a [href "#", onClick FetchMeta] [text "Try again?"]
+              ]
         ]
-    Ready model ->
-      div [class "container"]
+      Error {error} ->
+        [ p [class "error toast"]
+            [ authErrorText error
+            , text " "
+            , a [href "#", onClick FetchMeta] [text "Try again?"]
+            ]
+        ]
+      Ready model ->
         [ div [class "input-group"]
             [ button [onClick FetchMeta] [text "⟳"]
             , classSelect model
@@ -586,20 +568,15 @@ content model =
             Good roll ->
               rollTable model roll
             Waiting ->
-              p [] [text "Loading…"]
+              Loader.loader
             Bad error ->
-              p []
-                [ text ((
-                    case error of
-                      LocalStorage.NoStorage ->
-                        "Cannot access required storage."
-                      LocalStorage.Overflow ->
-                        "Storage exceeded limit."
-                      LocalStorage.UnexpectedPayload str ->
-                        "Unexpected payload.") ++ " ")
+              p [class "error toast"]
+                [ text "There was a storage error. "
                 , a [href "#", onClick FetchRoll] [text "Try again?"]
                 ]
         ]
+  ) |> div [class "container"]
+
 
 
 datePicker model =
@@ -659,6 +636,8 @@ rollTable model roll =
       )
   |> table [class "att"]
 
+
+
 rollCell x active kind name =
   td
     [ onClick <|
@@ -673,6 +652,34 @@ rollCell x active kind name =
           name ++ " button"
     ]
     []
+
+
+
+authErrorText err =
+  case err of
+    Auth.HttpError err ->
+      case err of
+        Http.BadUrl _ ->
+          a [href "http://www.mspaintadventures.com/?s=6&p=003552"]
+            [text "I'm sorry, but…"]
+        Http.Timeout ->
+          text "The Internet took too long."
+        Http.NetworkError ->
+          text "An unknown network error occurred."
+        Http.BadPayload _ _ ->
+          text "Please sign in." -- GraphQL Error.
+        Http.BadStatus _ ->
+          text "The server encountered an error."
+    Auth.ExpiredToken ->
+      text "The token has expired. Please sign in again." --TODO: Link to reauthenticate.
+    Auth.Unauthorized ->
+      text "Please sign in."
+    Auth.Forbidden ->
+      text "You aren't privileged enough."
+
+
+
+-- HELPERS
 
 
 
