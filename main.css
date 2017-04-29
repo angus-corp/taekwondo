@@ -145,3 +145,22 @@ select:focus {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* TOAST */
+
+.toast {
+  margin: 0;
+  padding: 16px;
+  border-radius: 3px;
+  position: relative;
+}
+
+.toast.success {
+  background-color: #00CC00;
+  border: 1px solid #00FF00;
+}
+
+.toast.error {
+  background-color: #CC0000;
+  border: 1px solid #FF0000;
+}
