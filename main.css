@@ -173,3 +173,39 @@ select:focus {
   background-color: #CC0000;
   border: 1px solid #FF0000;
 }
+
+/* INPUT GROUP */
+
+.input-group {
+  display: flex;
+  align-items: stretch;
+  margin-top: 16px;
+  border: solid 1px #EEEEEE;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.input-group button {
+  padding: 8px 12px;
+  font: inherit;
+  background-color: #FFFFFF;
+  border: 0;
+}
+
+.input-group button:active {
+  background-color: #EEEEEE;
+}
+
+.input-group :not(:last-child) {
+  border-right: 1px solid #EEEEEE;
+}
+
+.input-group select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 8px 16px;
+  font: inherit;
+  border: 0;
+  border-radius: 0;
+  background-color: #FFFFFF;
+}
