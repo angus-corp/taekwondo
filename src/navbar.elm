@@ -28,7 +28,9 @@ loginBtn logout token =
       div [class "dropdown"]
         [ button
             [ class "button dropdown-button"
-            , attribute "onclick" "this.focus()"]
+            --LONG: Horrible hack for Safari, should consider alternatives.
+            , attribute "onclick" "this.focus()"
+            ]
             [text token.username]
         , div [class "dropdown-menu"]
             [ a [href "profile"]
