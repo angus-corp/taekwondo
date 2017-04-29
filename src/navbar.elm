@@ -27,7 +27,8 @@ loginBtn logout token =
     Just token ->
       div [class "dropdown"]
         [ button
-            [class "button dropdown-button"]
+            [ class "button dropdown-button"
+            , attribute "onclick" "this.focus()"]
             [text token.username]
         , div [class "dropdown-menu"]
             [ a [href "profile"]

@@ -534,10 +534,6 @@ view model =
       , section [class "content"] [content model]
       ]
 
---TODO: Better errors.
---TODO: In dire need of refactoring.
---TODO: Styles / classes.
---TODO: ALL OF THIS.
 content model =
   (
     case model of
@@ -666,7 +662,7 @@ authErrorText err =
         Http.BadStatus _ ->
           tryAgain "The server encountered an error."
     Auth.ExpiredToken ->
-      pleaseSignInAgain --TODO: Link to reauthenticate.
+      pleaseSignInAgain
     Auth.Unauthorized ->
       pleaseSignIn
     Auth.Forbidden ->
