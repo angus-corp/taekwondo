@@ -7,6 +7,7 @@ import Html exposing (..)
 import Http
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput, onSubmit)
+import Window
 
 
 
@@ -58,6 +59,7 @@ type Msg
   | Submit
   | CompleteLogin (Result Http.Error Auth.Token)
   | Finish (Result LocalStorage.Error ())
+  | Void
 
 
 
@@ -82,7 +84,9 @@ update msg model =
         }
       , Cmd.none)
     Finish _ ->
-      ({model | state = Done }, Cmd.none) --LONG: Close the window.
+      ( {model | state = Done }
+      , Window.close |> Task.attempt (\_ -> Void)) --LONG: Close the window.
+    Void -> ({model | state = Done}, Cmd.none)
 
 
 
