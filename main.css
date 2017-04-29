@@ -107,6 +107,10 @@ nav .button:active {
   display: flex;
 }
 
+.dropdown-button:focus {
+  pointer-events: none;
+}
+
 .dropdown-menu:hover {
   display: flex;
 }
