@@ -77,12 +77,13 @@ nav .button:active {
   background-color: #FFFFFF;
   flex-direction: column;
   position: absolute;
-  top: calc(100% + 16px);
+  bottom: -16px;
   right: 0;
   width: 144px;
   color: #444444;
   z-index: 100;
   padding: 8px 0;
+  border-radius: 3px;
 }
 
 .dropdown-menu::before {
