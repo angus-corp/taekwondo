@@ -9,8 +9,8 @@ import Dict exposing (Dict)
 import Date exposing (Date)
 import Json.Encode as E
 import Json.Decode as D
+import Messages
 import Navbar exposing (navbar)
-import Loader
 import LocalStorage
 import Task exposing (Task)
 import Html exposing (..)
@@ -208,8 +208,8 @@ showResults results state =
   div [] <|
     [ ul [] (List.map showResult results)
     , case state of
-        Loading -> Loader.loader
-        Error err -> p [class "error toast"] [errorText err]
+        Loading -> Messages.loader
+        Error err -> p [class "error toast"] [Messages.authError FetchNext err]
         Ready -> button [onClick FetchNext] [text "More"]
     ]
 
@@ -222,44 +222,3 @@ showResult res =
     ]
 
 --TODO: Abstract. These appear in several pages.
-errorText err =
-  case err of
-      Auth.HttpError err ->
-        case err of
-          Http.BadUrl _ -> --TODO: Move to config.
-            a [href "http://www.mspaintadventures.com/?s=6&p=003552"]
-              [text "I'm sorry, but…"]
-          Http.Timeout ->
-            tryAgain "The Internet took too long."
-          Http.NetworkError ->
-            tryAgain "An unknown network error occurred."
-          Http.BadPayload _ _ ->
-            pleaseSignIn -- GraphQL Error.
-          Http.BadStatus _ ->
-            tryAgain "The server encountered an error."
-      Auth.ExpiredToken ->
-        pleaseSignInAgain
-      Auth.Unauthorized ->
-        pleaseSignIn
-      Auth.Forbidden ->
-        tryAgain "You aren't privileged enough."
-
-pleaseSignInAgain =
-  span []
-    [ text "Please "
-    , a [href "login", target "login"] [text "sign in again"]
-    , text "."
-    ]
-
-pleaseSignIn =
-  span []
-    [ text "Please "
-    , a [href "login", target "login"] [text "sign in"]
-    , text "."
-    ]
-
-tryAgain msg =
-  span []
-    [ text (msg ++ " ")
-    , a [onClick FetchNext] [text "Try again?"]
-    ]

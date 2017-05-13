@@ -6,7 +6,7 @@ import Date exposing (Date)
 import Json.Encode as E
 import Json.Decode as D
 import Navbar exposing (navbar)
-import Loader
+import Messages
 import LocalStorage
 import Task exposing (Task)
 import Html exposing (..)
@@ -535,17 +535,17 @@ view model =
 content model =
   (
     case model of
-      Loading model -> [Loader.loader]
+      Loading model -> [Messages.loader]
       Empty model ->
         [ p [class "error toast"] <|
             if model.token == Nothing then
-              [pleaseSignIn]
+              [Messages.pleaseSignIn]
             else
-              [tryAgain "You have no classes to track! "]
+              [Messages.tryAgain FetchMeta "You have no classes to track!"]
         ]
       Error {error} ->
         [ p [class "error toast"]
-            [authErrorText error]
+            [Messages.authError FetchMeta error]
         ]
       Ready model ->
         [ div [class "input-group"]
@@ -557,12 +557,10 @@ content model =
             Good roll ->
               rollTable model roll
             Waiting ->
-              Loader.loader
+              Messages.loader
             Bad error ->
               p [class "error toast"]
-                [ text "There was a storage error. "
-                , a [onClick FetchRoll] [text "Try again?"]
-                ]
+                [Messages.tryAgain FetchRoll "There was a storage error."]
         ]
   ) |> div [class "container"]
 
@@ -642,51 +640,6 @@ rollCell x active kind name =
     ]
     []
 
-
-
-authErrorText err =
-  case err of
-    Auth.HttpError err ->
-      case err of
-        Http.BadUrl _ ->
-          a [href "http://www.mspaintadventures.com/?s=6&p=003552"]
-            [text "I'm sorry, but…"]
-        Http.Timeout ->
-          tryAgain "The Internet took too long."
-        Http.NetworkError ->
-          tryAgain "An unknown network error occurred."
-        Http.BadPayload _ _ ->
-          pleaseSignIn -- GraphQL Error.
-        Http.BadStatus _ ->
-          tryAgain "The server encountered an error."
-    Auth.ExpiredToken ->
-      pleaseSignInAgain
-    Auth.Unauthorized ->
-      pleaseSignIn
-    Auth.Forbidden ->
-      tryAgain "You aren't privileged enough."
-
-
-
-pleaseSignInAgain =
-  span []
-    [ text "Please "
-    , a [href "login", target "login"] [text "sign in again"]
-    , text "."
-    ]
-
-pleaseSignIn =
-  span []
-    [ text "Please "
-    , a [href "login", target "login"] [text "sign in"]
-    , text "."
-    ]
-
-tryAgain msg =
-  span []
-    [ text (msg ++ " ")
-    , a [onClick FetchMeta] [text "Try again?"]
-    ]
 
 
 -- HELPERS
