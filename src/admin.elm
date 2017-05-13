@@ -216,10 +216,10 @@ showResults results state =
 showResult res =
   li []
     [ a [href ("user?id=" ++ (toString res.id)), class "user"]
-        [ span [class "first-name"] [text res.username ]
+        [ span [class "first-name"] [text res.firstName]
         , text " "
-        , span [class "last-name" ] [text res.firstName]
+        , span [class "last-name"] [text res.lastName]
         , text " "
-        , span [class "username"  ] [text res.lastName ]
+        , span [class "username"] [text res.username]
         ]
     ]
