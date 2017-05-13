@@ -196,18 +196,20 @@ view model =
       , section [class "content"]
           [ input
               [ type_ "text"
+              , class "search"
               , value model.query
+              , autofocus True
               , placeholder "Filter Users…"
               , onInput UpdateQuery
               ] []
-          , ul [] (List.map showResult model.results)
+          , ul [class "users"] (List.map showResult model.results)
           , case model.state of
               Loading ->
                 Messages.loader
               Error err ->
                 p [class "error toast"] [Messages.authError FetchNext err]
               Ready ->
-                button [onClick FetchNext] [text "More"]
+                button [onClick FetchNext, class "more"] [text "More"]
           ]
       ]
 
