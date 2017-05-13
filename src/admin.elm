@@ -200,18 +200,16 @@ view model =
               , placeholder "Filter Users…"
               , onInput UpdateQuery
               ] []
-          , showResults model.results model.state
+          , ul [] (List.map showResult model.results)
+          , case model.state of
+              Loading ->
+                Messages.loader
+              Error err ->
+                p [class "error toast"] [Messages.authError FetchNext err]
+              Ready ->
+                button [onClick FetchNext] [text "More"]
           ]
       ]
-
-showResults results state =
-  div [] <|
-    [ ul [] (List.map showResult results)
-    , case state of
-        Loading -> Messages.loader
-        Error err -> p [class "error toast"] [Messages.authError FetchNext err]
-        Ready -> button [onClick FetchNext] [text "More"]
-    ]
 
 showResult res =
   li []
