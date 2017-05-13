@@ -1,5 +1,9 @@
 module Admin exposing (..)
 
+--TODO: Automatic infinite scrolling on scroll-to-bottom.
+--TODO: STYLING.
+--TODO: DEBOUNCE.
+
 import Auth
 import Dict exposing (Dict)
 import Date exposing (Date)
@@ -32,14 +36,22 @@ main =
 
 type alias Model =
   { query   : String
-  , results : Maybe (Result Auth.Error (List Student))
+  , results : List Student
+  , state   : State
   , token   : Maybe Auth.Token
   }
 
 
 
+type State
+  = Loading
+  | Error Auth.Error
+  | Ready
+
+
+
 type alias Student =
-  { id : Float
+  { id : Int
   , username  : String
   , firstName : String
   , lastName  : String
@@ -49,7 +61,7 @@ type alias Student =
 
 init : (Model, Cmd Msg)
 init =
-  ( Model "" (Just (Ok [])) Nothing
+  ( Model "" [] Loading Nothing
   , Task.attempt DefrostAuth Auth.defrost
   )
 
@@ -67,10 +79,10 @@ subscriptions model = Auth.reauth Login
 type Msg
   = DefrostAuth (Result LocalStorage.Error (Maybe Auth.Token))
   | Login (Maybe Auth.Token)
-  | Retry
+  | FetchNext
   | Logout
   | UpdateQuery String
-  | UpdateResults (Result Auth.Error (List Student))
+  | Found String Int (Result Auth.Error (List Student))
   | Void
 
 
@@ -81,25 +93,57 @@ update msg model =
     UpdateQuery query ->
       ( { model
         | query = query
-        , results = Nothing
+        , results = []
+        , state = Loading
         }
-      , fetch UpdateResults model.token query
+      , fetch Found model.token query 0
       )
 
-    UpdateResults res ->
-      ({model | results = Just res}, Cmd.none)
+    FetchNext ->
+      ( {model | state = Loading}
+      , fetch Found model.token model.query (List.length model.results)
+      )
 
-    Retry ->
-      ({model | results = Nothing}, fetch UpdateResults model.token model.query)
+    Found query offset result ->
+      if Loading == model.state &&
+        query == model.query &&
+        offset == (List.length model.results) then
+        case result of
+          Ok results ->
+            ( { model
+              | state = Ready
+              , results = model.results ++ results
+              }
+            , Cmd.none
+            )
+          Err error ->
+            ( { model
+              | state = Error error
+              }
+            , Cmd.none
+            )
+      else
+        (model, Cmd.none)
 
     DefrostAuth (Ok (Just t)) ->
-      ({model | token = Just t}, Cmd.none)
+      ( {model | token = (Just t)} -- Results already nothing.
+      , fetch Found (Just t) "" 0
+      )
+
+    DefrostAuth _ ->
+      ( model -- Results already nothing.
+      , fetch Found model.token "" 0
+      )
 
     Login t ->
-      ({model | token = t}, Cmd.none)
+      ( {model | token = t}
+      , Cmd.none
+      )
 
     Logout ->
-      ({model | token = Nothing}, Task.attempt (\_ -> Void) Auth.clear)
+      ( {model | token = Nothing}
+      , Task.attempt (\_ -> Void) Auth.clear
+      )
 
     _ -> (model, Cmd.none)
 
@@ -109,8 +153,8 @@ update msg model =
 
 
 
-serverQuery = """query ($q: String) {
-  users(query: $q) {
+serverQuery = """query ($q: String, $i: Int) {
+  users(query: $q, count: 30, skip: $i) {
     id,
     firstName,
     lastName,
@@ -120,9 +164,9 @@ serverQuery = """query ($q: String) {
 
 
 
-fetch msg token query =
+fetch msg token query offset =
   D.map4 Student
-    (D.field "id" D.float)
+    (D.field "id" D.int)
     (D.field "username" D.string)
     (D.field "firstName" D.string)
     (D.field "lastName" D.string)
@@ -132,8 +176,10 @@ fetch msg token query =
         token
         "https://ttkkdd.herokuapp.com" --LONG: Move out into config.
         serverQuery
-        [("q", E.string query)]
-  |>  Task.attempt msg
+        [("q", E.string query), ("i", E.int offset)]
+  |>  Task.attempt (msg query offset)
+
+
 
 -- VIEW
 
@@ -147,27 +193,29 @@ view model =
           [ input
               [ type_ "text"
               , value model.query
-              , placeholder "User Query…"
+              , placeholder "Filter Users…"
               , onInput UpdateQuery
               ] []
-          , showResults model.results
+          , showResults model.results model.state
           ]
       ]
 
-showResults results =
-  case results of
-    Nothing ->
-      Loader.loader
+showResults results state =
+  div [] <|
+    [ ul [] (List.map showResult results)
+    , case state of
+        Loading -> Loader.loader
+        Error err -> p [class "error toast"] [errorText err]
+        Ready -> button [onClick FetchNext] [text "More"]
+    ]
 
-    Just (Err err) ->
-      p [class "error toast"] [errorText err]
-
-    Just (Ok results) ->
-      ul []
-        (List.map showResult results)
-
-showResult res = --TODO: This, onclick and separate fields.
-  li [] [text res.username, text res.firstName, text res.lastName]
+showResult res =
+  li []
+    [ a [href ("user?id=" ++ (toString res.id))]
+        [ span [] [text res.username]
+        , span [] [text res.firstName]
+        , span [] [text res.lastName]]
+    ]
 
 --TODO: Abstract. These appear in several pages.
 errorText err =
@@ -209,5 +257,5 @@ pleaseSignIn =
 tryAgain msg =
   span []
     [ text (msg ++ " ")
-    , a [href "#", onClick Retry] [text "Try again?"]
+    , a [href "#", onClick FetchNext] [text "Try again?"]
     ]
