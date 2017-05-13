@@ -36,7 +36,7 @@ loginBtn logout token =
                 [text "Profile"]
             , a [href "login", target "login"]
                 [text "Switch User"]
-            , a [href "#", onClick logout]
+            , a [onClick logout]
                 [text "Sign Out"]
             ]
         ]

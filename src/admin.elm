@@ -261,5 +261,5 @@ pleaseSignIn =
 tryAgain msg =
   span []
     [ text (msg ++ " ")
-    , a [href "#", onClick FetchNext] [text "Try again?"]
+    , a [onClick FetchNext] [text "Try again?"]
     ]

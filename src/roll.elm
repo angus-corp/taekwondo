@@ -561,7 +561,7 @@ content model =
             Bad error ->
               p [class "error toast"]
                 [ text "There was a storage error. "
-                , a [href "#", onClick FetchRoll] [text "Try again?"]
+                , a [onClick FetchRoll] [text "Try again?"]
                 ]
         ]
   ) |> div [class "container"]
@@ -685,7 +685,7 @@ pleaseSignIn =
 tryAgain msg =
   span []
     [ text (msg ++ " ")
-    , a [href "#", onClick FetchMeta] [text "Try again?"]
+    , a [onClick FetchMeta] [text "Try again?"]
     ]
 
 
