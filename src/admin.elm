@@ -20,6 +20,10 @@ import Html.Events exposing (onInput, onSubmit, onClick)
 
 
 
+pageLength = 30
+
+
+
 main =
   Html.program
     { init = init
@@ -153,8 +157,8 @@ update msg model =
 
 
 
-serverQuery = """query ($q: String, $i: Int) {
-  users(query: $q, count: 30, skip: $i) {
+serverQuery offset = """query ($q: String) {
+  users(query: $q, offset: """ ++ (toString offset) ++ """, limit: """ ++ (toString pageLength) ++ """) {
     id,
     firstName,
     lastName,
@@ -175,7 +179,7 @@ fetch msg token query offset =
   |>  Auth.graphql
         token
         "https://ttkkdd.herokuapp.com" --LONG: Move out into config.
-        serverQuery
+        (serverQuery offset)
         [("q", E.string query), ("i", E.int offset)]
   |>  Task.attempt (msg query offset)
 
