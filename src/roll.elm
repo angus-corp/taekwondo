@@ -615,8 +615,8 @@ rollTable model roll =
           |> Maybe.withDefault Unknown
         in
           tr []
-            [ td [class "name"]
-                [ a [href ("user?id=" ++ toString id)]
+            [ td []
+                [ a [href ("user?id=" ++ toString id), class "name"]
                     [text (nameOf model id)]
                 ]
             , rollCell id active Present "present"
