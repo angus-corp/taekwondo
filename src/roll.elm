@@ -86,8 +86,8 @@ tackOnTheDate task =
 
 
 type alias Roll = Dict ClassID (Dict UserID Attendance)
-type alias ClassID = Float
-type alias UserID = Float
+type alias ClassID = Int
+type alias UserID = Int
 type Attendance
   = Present
   | Absent
@@ -128,7 +128,7 @@ getRoll date =
         3 -> Late
         _ -> Unknown
     decodeRoll =
-      dictFromList D.float (dictFromList D.float <| D.map attendify D.float)
+      dictFromList D.int (dictFromList D.int <| D.map attendify D.int)
   in
     LocalStorage.get key
     |> Task.map
@@ -142,7 +142,7 @@ setRoll : Date -> Roll -> Task LocalStorage.Error ()
 setRoll date roll =
   let
     key = "roll-" ++ (dateString date)
-    floatify att =
+    serializeAttendance att =
       case att of
         Unknown -> 0
         Present -> 1
@@ -150,12 +150,12 @@ setRoll date roll =
         Late -> 3
     encodeClass (id, students) =
       E.list
-        [ E.float id
+        [ E.int id
         , students
           |> Dict.toList
           |> List.filter (\(a, b) -> b /= Unknown)
           |> List.map
-            (\(a, b) -> E.list [E.float a, b |> floatify |> E.float])
+            (\(a, b) -> E.list [E.int a, b |> serializeAttendance |> E.int])
           |> E.list
         ]
   in
@@ -173,7 +173,7 @@ getMeta =
       D.map2 Meta
         ( D.field "students" <|
             D.map Dict.fromList <| D.list <| D.map2 (,)
-              (D.index 0 D.float)
+              (D.index 0 D.int)
               (D.index 1 <| D.map3 StudentNames
                 (D.index 0 D.string)
                 (D.index 1 D.string)
@@ -182,9 +182,9 @@ getMeta =
         ( D.field "classes" <|
             D.list <| D.map3
               (\x y z -> { id = x, name = y, students = z })
-              (D.field "id" D.float)
+              (D.field "id" D.int)
               (D.field "name" D.string)
-              (D.field "students" (D.list D.float))
+              (D.field "students" (D.list D.int))
         )
   in
     LocalStorage.get "roll-meta"
@@ -199,7 +199,7 @@ setMeta meta =
   let
     encodeStudent (id, stu) =
       E.list
-        [ E.float id
+        [ E.int id
         , E.list
             [ E.string stu.firstName
             , E.string stu.lastName
@@ -208,9 +208,9 @@ setMeta meta =
         ]
     encodeClass class =
       E.object
-        [ ("id", E.float class.id)
+        [ ("id", E.int class.id)
         , ("name", E.string class.name)
-        , ("students", class.students |> List.map E.float |> E.list)
+        , ("students", class.students |> List.map E.int |> E.list)
         ]
   in
     E.object
@@ -237,12 +237,12 @@ dictFromList a b =
 
 
 type alias Location =
-  { id : Float
+  { id : Int
   , name : String
   , students : List Student
   }
 type alias Student =
-  { id : Float
+  { id : Int
   , firstName : String
   , lastName : String
   , username : String
@@ -267,13 +267,13 @@ responseModel =
 
 locationModel =
   D.map3 Location
-    (D.field "id" D.float)
+    (D.field "id" D.int)
     (D.field "name" D.string)
     (D.field "students" (D.list studentModel))
 
 studentModel =
   D.map4 Student
-    (D.field "id" D.float)
+    (D.field "id" D.int)
     (D.field "firstName" D.string)
     (D.field "lastName" D.string)
     (D.field "username" D.string)
@@ -608,30 +608,33 @@ classSelect model =
 rollTable model roll =
   model.class.students
   |> List.map
-      (\x ->
+      (\id ->
         let
           active = Dict.get model.class.id roll
-          |> Maybe.andThen (Dict.get x)
+          |> Maybe.andThen (Dict.get id)
           |> Maybe.withDefault Unknown
         in
           tr []
-            [ td [] [text (nameOf model x)]
-            , rollCell x active Present "present"
-            , rollCell x active Absent "absent"
-            , rollCell x active Late "late"
+            [ td [class "name"]
+                [ a [href ("user?id=" ++ toString id)]
+                    [text (nameOf model id)]
+                ]
+            , rollCell id active Present "present"
+            , rollCell id active Absent "absent"
+            , rollCell id active Late "late"
             ]
       )
   |> table [class "att"]
 
 
 
-rollCell x active kind name =
+rollCell id active kind name =
   td
     [ onClick <|
         if active == kind then
-          Mark Unknown x
+          Mark Unknown id
         else
-          Mark kind x
+          Mark kind id
     , class <|
         if active == kind then
           name ++ " active button"
