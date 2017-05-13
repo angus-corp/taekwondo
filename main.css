@@ -12,6 +12,12 @@ html {
   height: 100%;
 }
 
+a {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #FFFFFF;
+}
+
 /* NAVIGATION */
 
 nav {
@@ -176,10 +182,6 @@ select:focus {
 .toast.error {
   background-color: #CC0000;
   border: 1px solid #FF0000;
-}
-
-.toast a {
-  color: #FFFFFF;
 }
 
 /* INPUT GROUP */
