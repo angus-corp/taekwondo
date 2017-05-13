@@ -88,7 +88,7 @@ nav .button:active {
   flex-direction: column;
   position: absolute;
   top: calc(100% + 16px);
-  right: 0;
+  right: 8px;
   width: 144px;
   color: #444444;
   z-index: 100;
