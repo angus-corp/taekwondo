@@ -68,6 +68,7 @@ type Msg
   = DefrostAuth (Result LocalStorage.Error (Maybe Auth.Token))
   | Login (Maybe Auth.Token)
   | Logout
+  | UpdateQuery String
   | Void
 
 
@@ -75,6 +76,9 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    UpdateQuery query ->
+      ({model | query = query}, Cmd.none) --TODO: Refetch results.
+
     DefrostAuth (Ok (Just t)) ->
       ({model | token = Just t}, Cmd.none)
 
@@ -96,5 +100,12 @@ view : Model -> Html Msg
 view model =
     div []
       [ navbar Logout model.token "Admin"
-      , section [class "content"] [text "TODO"]
+      , section [class "content"]
+          [ input
+              [ type_ "text"
+              , value model.query
+              , placeholder "User Query…"
+              , onInput UpdateQuery
+              ] []
+          ]
       ]
