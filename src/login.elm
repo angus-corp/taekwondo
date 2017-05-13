@@ -85,7 +85,7 @@ update msg model =
       , Cmd.none)
     Finish _ ->
       ( {model | state = Done }
-      , Window.close |> Task.attempt (\_ -> Void)) --LONG: Close the window.
+      , Window.close |> Task.attempt (\_ -> Void))
     Void -> ({model | state = Done}, Cmd.none)
 
 
@@ -115,8 +115,6 @@ errorMessage e = case e of
 
 
 
---LONG: STYLE IT.
---LONG: Viewport meta.
 view : Model -> Html Msg
 view model =
   div [class "container"] <|

@@ -30,7 +30,6 @@ main =
 
 
 
---LONG: Add notes.
 type Model
   = Ready
     { token: Maybe Auth.Token
@@ -386,7 +385,6 @@ update msg model =
 
 
 
-    --LONG: Don't autosave!
     Mark val userid ->
       case model of
         Ready model ->

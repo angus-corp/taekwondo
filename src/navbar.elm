@@ -6,7 +6,6 @@ import Html.Events exposing (onClick)
 
 
 
---LONG: Fill in links.
 navbar logout token page =
   nav []
     [ h1 [] [text "TTKKDD"]
