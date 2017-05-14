@@ -194,7 +194,8 @@ view model =
     div []
       [ navbar Logout model.token "Admin"
       , section [class "content"]
-          [ input
+          [ a [href "register", class "add"] []
+          , input
               [ type_ "text"
               , class "search"
               , value model.query
