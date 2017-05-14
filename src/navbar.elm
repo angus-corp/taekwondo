@@ -8,8 +8,7 @@ import Html.Events exposing (onClick)
 
 navbar logout token page =
   nav []
-    [ h1 [] [text "TTKKDD"]
-    , ul []
+    [ ul []
         [ navBtn page "Match" "match"
         , navBtn page "Roll" "roll"
         , navBtn page "Payments" "payments"
